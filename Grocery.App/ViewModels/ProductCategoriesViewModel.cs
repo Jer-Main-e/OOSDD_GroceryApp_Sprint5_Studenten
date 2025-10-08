@@ -1,9 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Grocery.App.ViewModels;
 using Grocery.Core.Interfaces.Services;
 using Grocery.Core.Models;
+using Grocery.Core.Services;
 using System.Collections.ObjectModel;
-using Grocery.App.ViewModels;
 
 [QueryProperty(nameof(Category), nameof(Category))]
 public partial class ProductCategoriesViewModel : BaseViewModel
@@ -16,9 +17,24 @@ public partial class ProductCategoriesViewModel : BaseViewModel
 
     [ObservableProperty]
     Category category;
-    public ProductCategoriesViewModel(IProductCategoryService productCategoryService, IProductService productService) { }
-    partial void OnCategoryChanged(Category? oldValue, Category newValue) { }
-    private void GetAvailableProducts() { }
+    public ProductCategoriesViewModel(IProductCategoryService productCategoryService, IProductService productService)
+    {
+        _productCategoryService = productCategoryService;
+        _productService = productService;
+    }
+    partial void OnCategoryChanged(Category? oldValue, Category newValue)
+    {
+        //BoughtProductsList.Clear();
+        //List<BoughtProducts> list = _boughtProductsService.Get(newValue.Id);
+        //foreach (var item in list)
+        //{
+        //    BoughtProductsList.Add(item);
+        //}
+    }
+    private void GetAvailableProducts()
+    {
+
+    }
     [RelayCommand]
     public void AddProduct(Product product) { }
     [RelayCommand]

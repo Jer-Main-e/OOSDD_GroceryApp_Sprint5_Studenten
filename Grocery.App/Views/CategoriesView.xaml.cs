@@ -1,9 +1,12 @@
+using Grocery.App.ViewModels;
+
 namespace Grocery.App.Views;
 
-public partial class CategoriesView : ContentView
+public partial class CategoriesView : ContentPage
 {
-	public CategoriesView()
-	{
-		InitializeComponent();
-	}
+    public CategoriesView(CategoriesViewModel viewModel)
+    {
+        InitializeComponent();
+        BindingContext = viewModel;
+    }
 }

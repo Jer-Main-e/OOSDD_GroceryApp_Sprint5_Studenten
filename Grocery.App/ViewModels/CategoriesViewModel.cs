@@ -3,6 +3,7 @@ using Grocery.App.ViewModels;
 using Grocery.Core.Interfaces.Services;
 using Grocery.Core.Models;
 using System.Collections.ObjectModel;
+using Grocery.App.Views;
 
 public partial class CategoriesViewModel : BaseViewModel
 {
@@ -15,7 +16,7 @@ public partial class CategoriesViewModel : BaseViewModel
         Categories = new(_categoryService.GetAll());
     }
     [RelayCommand]
-    public async Task SelectCategory(Category category)
+    public async Task SelectProductCategory(Category category)
     {
         Dictionary<string, object> paramater = new() { { nameof(Category), category } };
         await Shell.Current.GoToAsync($"{nameof(ProductCategoriesView)}", true, paramater);
