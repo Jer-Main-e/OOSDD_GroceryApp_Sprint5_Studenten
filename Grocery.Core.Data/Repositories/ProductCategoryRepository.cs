@@ -13,6 +13,11 @@ public class ProductCategoryRepository : IProductCategoryRepository
       new ProductCategory(4, 5, 4),
       ];
     }
+
+    public List<ProductCategory> GetAllOnCategoryId(int id)
+    {
+        return productCategories.Where(pC => pC.CategoryId == id).ToList();
+    }
     public ProductCategory Add(ProductCategory item)
     {
         productCategories.Add(item);
