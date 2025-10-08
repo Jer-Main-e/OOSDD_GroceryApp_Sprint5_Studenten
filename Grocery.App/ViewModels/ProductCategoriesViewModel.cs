@@ -24,19 +24,30 @@ public partial class ProductCategoriesViewModel : BaseViewModel
     }
     partial void OnCategoryChanged(Category? oldValue, Category newValue)
     {
-        //BoughtProductsList.Clear();
-        //List<BoughtProducts> list = _boughtProductsService.Get(newValue.Id);
-        //foreach (var item in list)
-        //{
-        //    BoughtProductsList.Add(item);
-        //}
+        ProductCategories.Clear();
+        List<ProductCategory> list = _productCategoryService.GetAllOnCategoryId(newValue.Id);
+        foreach (var item in list)
+        {
+            ProductCategories.Add(item);
+        }
     }
     private void GetAvailableProducts()
     {
-
+        AvailableProducts.Clear();
+        foreach (Product p in _productService.GetAll())
+            if (ProductCategories.FirstOrDefault(p => p.ProductId == p.Id) == null && p.Stock > 0 && (searchText == "" || p.Name.ToLower().Contains(searchText.ToLower())))
+                AvailableProducts.Add(p);
     }
     [RelayCommand]
-    public void AddProduct(Product product) { }
+    public void AddProduct(Product product) 
+    {
+
+    }
+    
     [RelayCommand]
-    public void PerformSearch(string searchText) { }
+    public void PerformSearch(string searchText)
+    {
+        this.searchText = searchText;
+        GetAvailableProducts();
+    }
 }
