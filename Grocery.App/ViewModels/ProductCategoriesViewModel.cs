@@ -25,18 +25,28 @@ public partial class ProductCategoriesViewModel : BaseViewModel
     partial void OnCategoryChanged(Category? oldValue, Category newValue)
     {
         ProductCategories.Clear();
-        List<ProductCategory> list = _productCategoryService.GetAllOnCategoryId(newValue.Id);
-        foreach (var item in list)
+        foreach(var item in _productCategoryService.GetAllOnCategoryId(newValue.Id))
         {
             ProductCategories.Add(item);
         }
+        GetAvailableProducts();
+
     }
     private void GetAvailableProducts()
     {
         AvailableProducts.Clear();
-        foreach (Product p in _productService.GetAll())
-            if (ProductCategories.FirstOrDefault(p => p.ProductId == p.Id) == null && p.Stock > 0 && (searchText == "" || p.Name.ToLower().Contains(searchText.ToLower())))
-                AvailableProducts.Add(p);
+        var productCategoryIds = new HashSet<int>(ProductCategories.Select(pc => pc.ProductId));
+        var allProducts = _productService.GetAll();
+
+        var filteredProducts = allProducts
+            .Where(p => p.Stock > 0
+                && !productCategoryIds.Contains(p.Id)
+                && (string.IsNullOrEmpty(searchText) || p.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase)));
+
+        foreach (var product in filteredProducts)
+        {
+            AvailableProducts.Add(product);
+        }
     }
     [RelayCommand]
     public void AddProduct(Product product) 
