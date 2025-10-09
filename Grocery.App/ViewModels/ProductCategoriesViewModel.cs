@@ -14,6 +14,7 @@ public partial class ProductCategoriesViewModel : BaseViewModel
     private string searchText = "";
     public ObservableCollection<ProductCategory> ProductCategories { get; set; } = [];
     public ObservableCollection<Product> AvailableProducts { get; set; } = [];
+    public ObservableCollection<Product> Products { get; set; } = [];
 
     [ObservableProperty]
     Category category;
@@ -22,13 +23,26 @@ public partial class ProductCategoriesViewModel : BaseViewModel
         _productCategoryService = productCategoryService;
         _productService = productService;
     }
+
     partial void OnCategoryChanged(Category? oldValue, Category newValue)
     {
+        if (newValue == null) return;
+
         ProductCategories.Clear();
-        foreach(var item in _productCategoryService.GetAllOnCategoryId(newValue.Id))
+        Products.Clear();
+
+        var categoryProducts = _productCategoryService.GetAllOnCategoryId(newValue.Id);
+
+        foreach (var item in categoryProducts)
         {
             ProductCategories.Add(item);
+            var product = _productService.Get(item.ProductId);
+            if (product != null)
+            {
+                Products.Add(product);
+            }
         }
+
         GetAvailableProducts();
 
     }
@@ -39,8 +53,7 @@ public partial class ProductCategoriesViewModel : BaseViewModel
         var allProducts = _productService.GetAll();
 
         var filteredProducts = allProducts
-            .Where(p => p.Stock > 0
-                && !productCategoryIds.Contains(p.Id)
+            .Where(p => !productCategoryIds.Contains(p.Id)
                 && (string.IsNullOrEmpty(searchText) || p.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase)));
 
         foreach (var product in filteredProducts)
@@ -51,7 +64,14 @@ public partial class ProductCategoriesViewModel : BaseViewModel
     [RelayCommand]
     public void AddProduct(Product product) 
     {
+        if (product == null || Category == null) return;
 
+        ProductCategory item = new(0, Category.Id, product.Id);
+        _productCategoryService.Add(item);
+
+        ProductCategories.Add(item);
+        Products.Add(product);
+        AvailableProducts.Remove(product);
     }
     
     [RelayCommand]
