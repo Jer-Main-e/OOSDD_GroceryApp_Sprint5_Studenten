@@ -1,0 +1,30 @@
+﻿using Grocery.Core.Interfaces.Repositories;
+using Grocery.Core.Models;
+
+public class ProductCategoryRepository : IProductCategoryRepository
+{
+    private readonly List<ProductCategory> productCategories;
+    public ProductCategoryRepository()
+    {
+        productCategories = [
+          new ProductCategory(1, 3, 1),
+      new ProductCategory(2, 3, 2),
+      new ProductCategory(3, 2, 3),
+      new ProductCategory(4, 5, 4),
+      ];
+    }
+
+    public List<ProductCategory> GetAllOnCategoryId(int id)
+    {
+        return productCategories.Where(pC => pC.CategoryId == id).ToList();
+    }
+    public ProductCategory Add(ProductCategory item)
+    {
+        productCategories.Add(item);
+        return item;
+    }
+    public List<ProductCategory> GetAll()
+    {
+        return productCategories;
+    }
+}
